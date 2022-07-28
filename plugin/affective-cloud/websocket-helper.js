@@ -1,7 +1,10 @@
 var pako = require("../utils/pako.js")
 var isWebSocketOpen = false
 var task = null
-var messageReceiveListener = null
+var rawJsonRequestListener = null
+var rawJsonResponseListener = null
+var connectListener = null
+var disconnectListener = null
 
 function connect(cloudUrl, timeout = 10000, connectSuccess, connectFailed) {
   console.log("url",cloudUrl)
@@ -16,11 +19,16 @@ function connect(cloudUrl, timeout = 10000, connectSuccess, connectFailed) {
     }
   })
   task.onClose((code,reason)=>{
-    console.log("close")
+    if(disconnectListener != null){
+      disconnectListener(code,reason)
+    }
   })
   task.onOpen((res)=>{
     isWebSocketOpen = true
     connectSuccess(res)
+    if(connectListener != null){
+      connectListener()
+    }
   })
   task.onError((res)=>{
     isWebSocketOpen = false
@@ -31,7 +39,7 @@ function connect(cloudUrl, timeout = 10000, connectSuccess, connectFailed) {
     var data = pako.inflate(msg.data)
     var  string= String.fromCharCode.apply(null, new Uint8Array(data));
     if (messageReceiveListener != null) {
-      messageReceiveListener(string)
+      rawJsonResponseListener(string)
     }
   })
   // wx.onSocketClose(function (res) {
@@ -52,12 +60,10 @@ function connect(cloudUrl, timeout = 10000, connectSuccess, connectFailed) {
   // })
 }
 
-function addMessageReceiveLisetenr(listener) {
-  messageReceiveListener = listener
-}
 
 function sendMessage(msg) {
   if (task != null && isWebSocketOpen) {
+    rawJsonRequestListener(JSON.stringify(msg))
     var data = pako.gzip(JSON.stringify(msg))
     task.send({data:data.buffer})
   }
@@ -70,8 +76,26 @@ function isOpen() {
 function closeWebSocket() {
   task.close()
 }
+
+function addRawJsonRequestListener(listener) {
+  rawJsonRequestListener
+}
+
+function addRawJsonResponseListener(listener) {
+  rawJsonResponseListener = listener
+}
+function addConnectListener(listener) {
+  connectListener = listener
+}
+
+function addDisconnectListener(listener) {
+  disconnectListener = listener
+}
 module.exports.closeWebSocket = closeWebSocket
 module.exports.isOpen = isOpen
 module.exports.connect = connect
-module.exports.addMessageReceiveLisetenr = addMessageReceiveLisetenr
 module.exports.sendMessage = sendMessage
+module.exports.addRawJsonRequestListener = addRawJsonRequestListener
+module.exports.addRawJsonResponseListener = addRawJsonResponseListener
+module.exports.addConnectListener = addConnectListener
+module.exports.addDisconnectListener = addDisconnectListener
