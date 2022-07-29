@@ -2,10 +2,10 @@ import ResponseBody from "response-body.js"
 var websocket_helper = require("../affective-cloud/websocket-helper.js")
 
 var requestBody = {
-  "services": null,
+  "services": {},
   "op": "",
-  "kwargs": null,
-  "args": null
+  "kwargs": {},
+  "args": {}
 }
 var SERVER_SESSION = "session"
 var SERVER_BIO_DATA = "biodata"
@@ -184,12 +184,10 @@ function init(url, timeout, appKey, appSecret, userId, uploadCycle) {
   uploadEEGTriggerCount = DEFAULT_UPLOAD_EEG_PACKAGE_COUNT * EEG_PACKAGE_LENGTH * uploadCycle
   uploadHRTriggerCount = DEFAULT_UPLOAD_HR_PACKAGE_COUNT * HR_PACKAGE_LENGTH * uploadCycle
   uploadPEPRTriggerCount = DEFAULT_UPLOAD_PEPR_PACKAGE_COUNT * PEPR_PACKAGE_LENGTH * uploadCycle
-
   websocket_helper.addRawJsonResponseListener(messageReceiveLisetner)
 }
 
 function openWebSocket(success, fail) {
-  console.log("connecting", mUrl)
   websocket_helper.connect(mUrl, mTimeout, success, fail)
 }
 
@@ -367,7 +365,7 @@ function subscribeBioData(optionalParams, response, callback) {
   mSubscribeBioData = optionalParams
   requestBody["services"] = SERVER_BIO_DATA
   requestBody["op"] = "subscribe"
-  requestBody["kwargs"] = null
+  requestBody["kwargs"] = {}
   requestBody["args"] = optionalParams
   websocket_helper.sendMessage(requestBody)
 }
@@ -386,7 +384,7 @@ function subscribeAffectiveData(optionalParams, response, callback) {
   mSubscribeAffectiveData = optionalParams
   requestBody["services"] = SERVER_AFFECTIVE
   requestBody["op"] = "subscribe"
-  requestBody["kwargs"] = null
+  requestBody["kwargs"] = {}
   requestBody["args"] = optionalParams
   websocket_helper.sendMessage(requestBody)
 }

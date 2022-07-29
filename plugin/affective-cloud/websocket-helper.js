@@ -1,45 +1,47 @@
 var pako = require("../utils/pako.js")
 var isWebSocketOpen = false
 var task = null
-var rawJsonRequestListener = null
-var rawJsonResponseListener = null
-var connectListener = null
-var disconnectListener = null
+var rawJsonRequestListeners = new Array()
+var rawJsonResponseListeners = new Array() 
+var connectListeners = new Array()
+var disconnectListeners = new Array()
 
 function connect(cloudUrl, timeout = 10000, connectSuccess, connectFailed) {
-  console.log("url",cloudUrl)
   task = wx.connectSocket({
     url: cloudUrl,
     timeout: timeout,
     success:function(res){
-      console.log("success")
     },
-    fail: function (resConnectError) {//打开连接失败
-      console.log(resConnectError)
+    fail: function (error) {//打开连接失败
     }
   })
   task.onClose((code,reason)=>{
-    if(disconnectListener != null){
-      disconnectListener(code,reason)
+    if(disconnectListeners != null){
+      for(var i in disconnectListeners){
+        disconnectListeners[i](code,reason)
+      }
     }
   })
   task.onOpen((res)=>{
     isWebSocketOpen = true
     connectSuccess(res)
-    if(connectListener != null){
-      connectListener()
+    if(connectListeners != null){
+      for(var i in connectListeners){
+        connectListeners[i]()
+      }
     }
   })
   task.onError((res)=>{
     isWebSocketOpen = false
-    connectFailed(result)
+    connectFailed(res)
   })
   task.onMessage((msg)=>{
-    console.log("on message",msg)
     var data = pako.inflate(msg.data)
     var  string= String.fromCharCode.apply(null, new Uint8Array(data));
-    if (messageReceiveListener != null) {
-      rawJsonResponseListener(string)
+    if (rawJsonResponseListeners != null) {
+      for(var i in rawJsonResponseListeners){
+        rawJsonResponseListeners[i](string)
+      }
     }
   })
   // wx.onSocketClose(function (res) {
@@ -63,7 +65,11 @@ function connect(cloudUrl, timeout = 10000, connectSuccess, connectFailed) {
 
 function sendMessage(msg) {
   if (task != null && isWebSocketOpen) {
-    rawJsonRequestListener(JSON.stringify(msg))
+    if(rawJsonRequestListeners != null){
+      for(var i in rawJsonRequestListeners){
+        rawJsonRequestListeners[i](JSON.stringify(msg))
+      }
+    }
     var data = pako.gzip(JSON.stringify(msg))
     task.send({data:data.buffer})
   }
@@ -78,11 +84,11 @@ function closeWebSocket() {
 }
 
 function addRawJsonRequestListener(listener) {
-  rawJsonRequestListener
+  rawJsonRequestListeners.push(listener)
 }
 
 function addRawJsonResponseListener(listener) {
-  rawJsonResponseListener = listener
+  rawJsonResponseListeners.push(listener)
 }
 function addConnectListener(listener) {
   connectListener = listener

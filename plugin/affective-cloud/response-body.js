@@ -51,7 +51,7 @@ export default class ResponseBody {
   isBiodataSubOp() {
     if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services"] == REQUEST_SERVICES_BIODATA) {
       for (var prop in this.data) {
-        if (prop == "fields") {
+        if (prop.search("fields")) {
           return true
         }
       }
@@ -62,7 +62,7 @@ export default class ResponseBody {
   isAffectiveSubOp() {
     if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services"] == REQUEST_SERVICES_AFFECTIVE) {
       for (var prop in this.data) {
-        if (prop == "fields") {
+        if (prop.search("fields")) {
           return true
         }
       }
