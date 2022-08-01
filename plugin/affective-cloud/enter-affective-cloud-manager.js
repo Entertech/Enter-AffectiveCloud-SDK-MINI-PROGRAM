@@ -224,7 +224,7 @@ export default class EnterAffectiveCloudManager {
     affective_cloud_api.appendEEGData(eeg)
   }
   appendHeartRateData(hr) {
-    affective_cloud_api.appendHeartData(pepr)
+    affective_cloud_api.appendHeartData(hr)
   }
   addBiodataRealtimeListener(listener) {
     this.mBiodataRealtimeListener = listener

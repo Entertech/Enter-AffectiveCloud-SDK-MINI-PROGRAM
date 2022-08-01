@@ -42,7 +42,7 @@ var mSubscribeAffectiveData = null
 var mSubscribeBioData = null
 var mSessionId = null
 var mBrainDataBuffer = []
-var mHeartDataBuffer = []
+var mHeartDataBuffer = new Array()
 var mPeprDataBuffer = []
 
 var uploadEEGTriggerCount = 1800
@@ -62,7 +62,7 @@ var HR_PACKAGE_LENGTH = 1
 var PEPR_PACKAGE_LENGTH = 15
 var DEFAULT_UPLOAD_CYCLE = 3
 var messageReceiveLisetner = function (msg) {
-  console.log("receive msg:",msg)
+  console.log("receive msg:", msg)
   var responseObject = JSON.parse(msg)
   var response = new ResponseBody(responseObject)
   if (response.isCreateOp()) {
@@ -342,23 +342,29 @@ function appendEEGData(brainData) {
     requestBody["services"] = SERVER_BIO_DATA
     requestBody["op"] = "upload"
     requestBody["kwargs"] = kwargs
-    console.log("eeg length",mBrainDataBuffer.length )
+    console.log("eeg length", mBrainDataBuffer.length)
     websocket_helper.sendMessage(requestBody)
     mBrainDataBuffer = []
   }
 }
 
 function appendHeartData(heartRateData) {
-  mHeartDataBuffer = mHeartDataBuffer.push(heartRateData)
+  mHeartDataBuffer.push(heartRateData)
   if (mHeartDataBuffer.length >= uploadHRTriggerCount) {
+
+    var requestBody = {
+      "services": {},
+      "op": "",
+      "kwargs": {},
+    }
     var kwargs = {
       "hr-v2": mHeartDataBuffer
     }
     requestBody["services"] = SERVER_BIO_DATA
     requestBody["op"] = "upload"
     requestBody["kwargs"] = kwargs
-    requestBody["args"] = null
     websocket_helper.sendMessage(requestBody)
+    // console.log("send hr", JSON.stringify(requestBody))
     mHeartDataBuffer = []
   }
 }
@@ -417,24 +423,29 @@ function subscribeAffectiveData(optionalParams, response, callback) {
   websocket_helper.sendMessage(requestBody)
 }
 
-function getBiodataReport(services,callback) {
+function getBiodataReport(services, callback) {
   mBiodataReportCallback = callback
-  var requestBodyMap = {"bio_data_type":services}
+  var requestBodyMap = {
+    "bio_data_type": services
+  }
   requestBody["services"] = SERVER_BIO_DATA
   requestBody["op"] = "report"
   requestBody["kwargs"] = requestBodyMap
   websocket_helper.sendMessage(requestBody)
 }
 
-function getAffectiveDataReport(services,callback) {
+function getAffectiveDataReport(services, callback) {
   mAffectiveReportCallback = callback
-  var requestBodyMap = {"cloud_services":services}
+  var requestBodyMap = {
+    "cloud_services": services
+  }
   requestBody["services"] = SERVER_AFFECTIVE
   requestBody["op"] = "report"
   requestBody["kwargs"] = requestBodyMap
   websocket_helper.sendMessage(requestBody)
 }
-function unsubscribeBioData(optionalParams,callback) {
+
+function unsubscribeBioData(optionalParams, callback) {
   mBiodataUnsubscribeCallback = callback
   requestBody["services"] = SERVER_BIO_DATA
   requestBody["op"] = "unsubscribe"
@@ -442,7 +453,8 @@ function unsubscribeBioData(optionalParams,callback) {
   requestBody["args"] = optionalParams
   websocket_helper.sendMessage(requestBody)
 }
-function unsubscribeAffectiveData(optionalParams,callback) {
+
+function unsubscribeAffectiveData(optionalParams, callback) {
   mAffectiveUnsubscribeCallback = callback
   requestBody["services"] = SERVER_AFFECTIVE
   requestBody["op"] = "unsubscribe"
@@ -450,17 +462,22 @@ function unsubscribeAffectiveData(optionalParams,callback) {
   requestBody["args"] = optionalParams
   websocket_helper.sendMessage(requestBody)
 }
-function finishAffectiveDataServices(services,callback) {
+
+function finishAffectiveDataServices(services, callback) {
   mAffectiveFinishCallback = callback
-  var requestBodyMap = {"cloud_services":services}
+  var requestBodyMap = {
+    "cloud_services": services
+  }
   requestBody["services"] = SERVER_AFFECTIVE
   requestBody["op"] = "finish"
   requestBody["kwargs"] = requestBodyMap
   websocket_helper.sendMessage(requestBody)
 }
+
 function finishAllAffectiveDataServices(callback) {
-  finishAffectiveDataServices(mStartedAffectiveServices,callback)
+  finishAffectiveDataServices(mStartedAffectiveServices, callback)
 }
+
 function destroySessionAndCloseWebSocket(callback) {
   mWebSocketCloseCallback = callback
   requestBody["services"] = SERVER_SESSION
@@ -468,23 +485,30 @@ function destroySessionAndCloseWebSocket(callback) {
   requestBody["kwargs"] = {}
   websocket_helper.sendMessage(requestBody)
 }
-function submit(remark,callback) {
+
+function submit(remark, callback) {
   mSubmitCallback = callback
-  var requestBodyMap = {"rec":remark}
+  var requestBodyMap = {
+    "rec": remark
+  }
   requestBody["services"] = SERVER_BIO_DATA
   requestBody["op"] = "submit"
   requestBody["kwargs"] = requestBodyMap
   websocket_helper.sendMessage(requestBody)
 }
+
 function addRawJsonRequestListener(listener) {
   websocket_helper.addRawJsonRequestListener(listener)
 }
+
 function addRawJsonResponseListener(listener) {
   websocket_helper.addRawJsonResponseListener(listener)
 }
+
 function addConnectListener(listener) {
   websocket_helper.addDisconnectListener(listener)
 }
+
 function addDisconnectListener(listener) {
   websocket_helper.addDisconnectListener(listener)
 }
