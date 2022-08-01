@@ -181,9 +181,9 @@ function init(url, timeout, appKey, appSecret, userId, uploadCycle) {
   mUserId = userId
   mUploadCycle = uploadCycle
 
-  uploadEEGTriggerCount = DEFAULT_UPLOAD_EEG_PACKAGE_COUNT * EEG_PACKAGE_LENGTH * uploadCycle
-  uploadHRTriggerCount = DEFAULT_UPLOAD_HR_PACKAGE_COUNT * HR_PACKAGE_LENGTH * uploadCycle
-  uploadPEPRTriggerCount = DEFAULT_UPLOAD_PEPR_PACKAGE_COUNT * PEPR_PACKAGE_LENGTH * uploadCycle
+  uploadEEGTriggerCount = BASE_UPLOAD_EEG_PACKAGE_COUNT * EEG_PACKAGE_LENGTH * mUploadCycle
+  uploadHRTriggerCount = BASE_UPLOAD_HR_PACKAGE_COUNT * HR_PACKAGE_LENGTH * mUploadCycle
+  uploadPEPRTriggerCount = DEFAULT_UPLOAD_PEPR_PACKAGE_COUNT * PEPR_PACKAGE_LENGTH * mUploadCycle
   websocket_helper.addRawJsonResponseListener(messageReceiveLisetner)
 }
 
@@ -279,10 +279,14 @@ function initBiodataServices(serviceList, callback) {
   let kwargs = {
     "bio_data_type": serviceList
   }
+  var requestBody = {
+    "services": {},
+    "op": "",
+    "kwargs": {},
+  }
   requestBody["services"] = SERVER_BIO_DATA
   requestBody["op"] = "init"
   requestBody["kwargs"] = kwargs
-  requestBody["args"] = null
   websocket_helper.sendMessage(requestBody)
 }
 
@@ -294,10 +298,15 @@ function initBiodataServicesWithParams(serviceList, callback, optionParams) {
   if (optionParams != null) {
     Object.assign(kwargs, optionParams)
   }
+
+  var requestBody = {
+    "services": {},
+    "op": "",
+    "kwargs": {},
+  }
   requestBody["services"] = SERVER_BIO_DATA
   requestBody["op"] = "init"
   requestBody["kwargs"] = kwargs
-  requestBody["args"] = null
   websocket_helper.sendMessage(requestBody)
 }
 
@@ -307,10 +316,15 @@ function initAffectiveDataServices(services, callback) {
   var kwargs = {
     "cloud_services": services
   }
+
+  var requestBody = {
+    "services": {},
+    "op": "",
+    "kwargs": {},
+  }
   requestBody["services"] = SERVER_AFFECTIVE
   requestBody["op"] = "start"
   requestBody["kwargs"] = kwargs
-  requestBody["args"] = null
   websocket_helper.sendMessage(requestBody)
 }
 
@@ -320,10 +334,15 @@ function appendEEGData(brainData) {
     var kwargs = {
       "eeg": mBrainDataBuffer
     }
+    var requestBody = {
+      "services": {},
+      "op": "",
+      "kwargs": {},
+    }
     requestBody["services"] = SERVER_BIO_DATA
     requestBody["op"] = "upload"
     requestBody["kwargs"] = kwargs
-    requestBody["args"] = null
+    console.log("eeg length",mBrainDataBuffer.length )
     websocket_helper.sendMessage(requestBody)
     mBrainDataBuffer = []
   }
@@ -363,9 +382,14 @@ function subscribeBioData(optionalParams, response, callback) {
   mBiodataResponseCallback = response
   mBiodataSubscribeCallback = callback
   mSubscribeBioData = optionalParams
+
+  var requestBody = {
+    "services": {},
+    "op": "",
+    "args": {},
+  }
   requestBody["services"] = SERVER_BIO_DATA
   requestBody["op"] = "subscribe"
-  requestBody["kwargs"] = {}
   requestBody["args"] = optionalParams
   websocket_helper.sendMessage(requestBody)
 }
@@ -382,9 +406,13 @@ function subscribeAffectiveData(optionalParams, response, callback) {
   mAffectiveDataResponseCallback = response
   mAffectiveSubscribeCallback = callback
   mSubscribeAffectiveData = optionalParams
+  var requestBody = {
+    "services": {},
+    "op": "",
+    "args": {},
+  }
   requestBody["services"] = SERVER_AFFECTIVE
   requestBody["op"] = "subscribe"
-  requestBody["kwargs"] = {}
   requestBody["args"] = optionalParams
   websocket_helper.sendMessage(requestBody)
 }
@@ -406,7 +434,7 @@ function getAffectiveDataReport(services,callback) {
   requestBody["kwargs"] = requestBodyMap
   websocket_helper.sendMessage(requestBoday)
 }
-function  unsubscribeBioData(optionalParams,callback) {
+function unsubscribeBioData(optionalParams,callback) {
   mBiodataUnsubscribeCallback = callback
   requestBoday["services"] = SERVER_BIO_DATA
   requestBoday["op"] = "unsubscribe"

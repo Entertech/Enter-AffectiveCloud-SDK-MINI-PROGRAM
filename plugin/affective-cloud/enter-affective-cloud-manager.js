@@ -218,7 +218,7 @@ export default class EnterAffectiveCloudManager {
     affective_cloud_api.appendPEPRData(pepr)
   }
   appendEEGData(eeg) {
-    affective_cloud_api.appendEEGData(pepr)
+    affective_cloud_api.appendEEGData(eeg)
   }
   appendHeartRateData(hr) {
     affective_cloud_api.appendHeartData(pepr)

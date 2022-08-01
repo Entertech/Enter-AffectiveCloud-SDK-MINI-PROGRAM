@@ -38,10 +38,22 @@
     "disableUseStrict": false,
     "minifyWXML": true,
     "showES6CompileOption": false,
-    "useCompilerPlugins": false
+    "useCompilerPlugins": false,
+    "useStaticServer": true
   },
-  "appid": "wx4273f7bc8f7f3c46",
+  "appid": "wxd59fa61ca4256bd1",
   "projectname": "EnterAffectiveCloudSDK",
   "pluginAppid": "wx86bdebd2e6f8dfc3",
-  "condition": {}
+  "condition": {},
+  "libVersion": "2.21.2",
+  "srcMiniprogramRoot": "miniprogram/",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  },
+  "description": "项目配置文件，详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html"
 }
