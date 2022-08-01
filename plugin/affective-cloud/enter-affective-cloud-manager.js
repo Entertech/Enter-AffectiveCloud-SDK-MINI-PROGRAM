@@ -118,6 +118,7 @@ export default class EnterAffectiveCloudManager {
           }
         }, {
           "onSuccess": function (subFields) {
+            console.log("sub affective success")
             callback.onSuccess()
           },
           "onError": function (error) {
@@ -200,6 +201,8 @@ export default class EnterAffectiveCloudManager {
           callback.onError(error)
         }
       })
+    }else{
+      callback.onSuccess()
     }
   }
 
@@ -209,7 +212,7 @@ export default class EnterAffectiveCloudManager {
   }
   getAffectiveReport(callback) {
     var affectiveServices = this.config["services"]["affective"]
-    affective_cloud_api.getAffectivedataReport(affectiveServices, callback)
+    affective_cloud_api.getAffectiveDataReport(affectiveServices, callback)
   }
   submit(remark, callback) {
     affective_cloud_api.submit(remark, callback)

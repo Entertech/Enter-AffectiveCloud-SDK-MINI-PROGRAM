@@ -420,61 +420,61 @@ function subscribeAffectiveData(optionalParams, response, callback) {
 function getBiodataReport(services,callback) {
   mBiodataReportCallback = callback
   var requestBodyMap = {"bio_data_type":services}
-  requestBoday["services"] = SERVER_BIO_DATA
-  requestBoday["op"] = "report"
+  requestBody["services"] = SERVER_BIO_DATA
+  requestBody["op"] = "report"
   requestBody["kwargs"] = requestBodyMap
-  websocket_helper.sendMessage(requestBoday)
+  websocket_helper.sendMessage(requestBody)
 }
 
 function getAffectiveDataReport(services,callback) {
   mAffectiveReportCallback = callback
   var requestBodyMap = {"cloud_services":services}
-  requestBoday["services"] = SERVER_AFFECTIVE
-  requestBoday["op"] = "report"
+  requestBody["services"] = SERVER_AFFECTIVE
+  requestBody["op"] = "report"
   requestBody["kwargs"] = requestBodyMap
-  websocket_helper.sendMessage(requestBoday)
+  websocket_helper.sendMessage(requestBody)
 }
 function unsubscribeBioData(optionalParams,callback) {
   mBiodataUnsubscribeCallback = callback
-  requestBoday["services"] = SERVER_BIO_DATA
-  requestBoday["op"] = "unsubscribe"
+  requestBody["services"] = SERVER_BIO_DATA
+  requestBody["op"] = "unsubscribe"
   requestBody["kwargs"] = null
   requestBody["args"] = optionalParams
-  websocket_helper.sendMessage(requestBoday)
+  websocket_helper.sendMessage(requestBody)
 }
 function unsubscribeAffectiveData(optionalParams,callback) {
   mAffectiveUnsubscribeCallback = callback
-  requestBoday["services"] = SERVER_AFFECTIVE
-  requestBoday["op"] = "unsubscribe"
+  requestBody["services"] = SERVER_AFFECTIVE
+  requestBody["op"] = "unsubscribe"
   requestBody["kwargs"] = null
   requestBody["args"] = optionalParams
-  websocket_helper.sendMessage(requestBoday)
+  websocket_helper.sendMessage(requestBody)
 }
 function finishAffectiveDataServices(services,callback) {
   mAffectiveFinishCallback = callback
   var requestBodyMap = {"cloud_services":services}
-  requestBoday["services"] = SERVER_AFFECTIVE
-  requestBoday["op"] = "finish"
+  requestBody["services"] = SERVER_AFFECTIVE
+  requestBody["op"] = "finish"
   requestBody["kwargs"] = requestBodyMap
-  websocket_helper.sendMessage(requestBoday)
+  websocket_helper.sendMessage(requestBody)
 }
 function finishAllAffectiveDataServices(callback) {
   finishAffectiveDataServices(mStartedAffectiveServices,callback)
 }
 function destroySessionAndCloseWebSocket(callback) {
   mWebSocketCloseCallback = callback
-  requestBoday["services"] = SERVER_SESSION
-  requestBoday["op"] = "close"
-  requestBody["kwargs"] = null
-  websocket_helper.sendMessage(requestBoday)
+  requestBody["services"] = SERVER_SESSION
+  requestBody["op"] = "close"
+  requestBody["kwargs"] = {}
+  websocket_helper.sendMessage(requestBody)
 }
 function submit(remark,callback) {
   mSubmitCallback = callback
   var requestBodyMap = {"rec":remark}
-  requestBoday["services"] = SERVER_BIO_DATA
-  requestBoday["op"] = "submit"
+  requestBody["services"] = SERVER_BIO_DATA
+  requestBody["op"] = "submit"
   requestBody["kwargs"] = requestBodyMap
-  websocket_helper.sendMessage(requestBoday)
+  websocket_helper.sendMessage(requestBody)
 }
 function addRawJsonRequestListener(listener) {
   websocket_helper.addRawJsonRequestListener(listener)

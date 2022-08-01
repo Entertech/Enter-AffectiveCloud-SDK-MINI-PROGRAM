@@ -38,7 +38,6 @@ function connect(cloudUrl, timeout = 10000, connectSuccess, connectFailed) {
   task.onMessage((msg)=>{
     var data = pako.inflate(msg.data)
     var  string= String.fromCharCode.apply(null, new Uint8Array(data));
-    console.log("on message",string)
     if (rawJsonResponseListeners != null) {
       for(var i in rawJsonResponseListeners){
         rawJsonResponseListeners[i](string)

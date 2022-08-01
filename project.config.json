@@ -43,7 +43,7 @@
   },
   "appid": "wxd59fa61ca4256bd1",
   "projectname": "EnterAffectiveCloudSDK",
-  "pluginAppid": "wx86bdebd2e6f8dfc3",
+  "pluginAppid": "wxd59fa61ca4256bd1",
   "condition": {},
   "libVersion": "2.21.2",
   "srcMiniprogramRoot": "miniprogram/",

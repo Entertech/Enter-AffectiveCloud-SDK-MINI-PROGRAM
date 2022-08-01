@@ -51,7 +51,7 @@ export default class ResponseBody {
   isBiodataSubOp() {
     if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services"] == REQUEST_SERVICES_BIODATA) {
       for (var prop in this.data) {
-        if (prop.search("fields")) {
+        if (prop.search("fields")!= -1) {
           return true
         }
       }
@@ -62,7 +62,7 @@ export default class ResponseBody {
   isAffectiveSubOp() {
     if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services"] == REQUEST_SERVICES_AFFECTIVE) {
       for (var prop in this.data) {
-        if (prop.search("fields")) {
+        if (prop.search("fields")!=-1) {
           return true
         }
       }
@@ -72,7 +72,7 @@ export default class ResponseBody {
   isBiodataUnsubOp() {
     if (this.request["op"] == REQUEST_OPTION_UNSUBSCRIBE && this.request["services"] == REQUEST_SERVICES_BIODATA) {
       for (var prop in this.data) {
-        if (prop == "fields") {
+        if (prop.search("fields")!=-1) {
           return true
         }
       }
@@ -83,7 +83,7 @@ export default class ResponseBody {
   isAffectiveUnsubOp() {
     if (this.request["op"] == REQUEST_OPTION_UNSUBSCRIBE && this.request["services"] == REQUEST_SERVICES_AFFECTIVE) {
       for (var prop in this.data) {
-        if (prop == "fields") {
+        if (prop.search("fields")!= -1) {
           return true
         }
       }
@@ -95,7 +95,7 @@ export default class ResponseBody {
     var result = true
     if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services" == REQUEST_SERVICES_BIODATA]) {
       for (var prop in this.data) {
-        if (prop == "fields") {
+        if (prop.search("fields") != -1) {
           result = false
         }
       }
@@ -109,7 +109,7 @@ export default class ResponseBody {
     var result = true
     if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services" == REQUEST_SERVICES_AFFECTIVE]) {
       for (var prop in this.data) {
-        if (prop == "fields") {
+        if (prop.search("fields") !=-1) {
           result = false
         }
       }
@@ -133,21 +133,24 @@ export default class ResponseBody {
   isSessionClose() {
     return this.request["op"] == REQUEST_OPTION_SESSION_CLOSE && this.request["services"] == REQUEST_SERVICES_SESSION
   }
-  isServicesUnknow(){
+  isServicesUnknow() {
     return this.request["services"] == "Unknow"
   }
-  getSessionId(){
-    if(this.request["op"] == REQUEST_OPTION_SESSION_CREATE){
-      if(this.data.hasOwnProperty("session_id")){
+  getSessionId() {
+    if (this.request["op"] == REQUEST_OPTION_SESSION_CREATE) {
+      if (this.data.hasOwnProperty("session_id")) {
         return this.data["session_id"]
       }
     }
     return null
   }
-  errorBody(){
-    return {"code":this.code,"msg":this.msg}
+  errorBody() {
+    return {
+      "code": this.code,
+      "msg": this.msg
+    }
   }
-  body(){
+  body() {
     return this.data
   }
 }

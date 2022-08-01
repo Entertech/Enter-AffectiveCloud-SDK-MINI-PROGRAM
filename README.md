@@ -1,1 +1,2 @@
-# Enter-AffectiveCloud-SDK-MINI-PROGRAM
+# 回车微信小程序情感云SDK
+

@@ -5,7 +5,7 @@
   "plugins": {
     "hello-plugin": {
       "version": "dev",
-      "provider": "wx86bdebd2e6f8dfc3"
+      "provider": "wxd59fa61ca4256bd1"
     }
   },
   "sitemapLocation": "sitemap.json"
