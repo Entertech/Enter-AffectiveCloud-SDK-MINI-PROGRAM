@@ -3,7 +3,7 @@
     "pages/index/index"
   ],
   "plugins": {
-    "hello-plugin": {
+    "enter-affective-cloud-plugin": {
       "version": "dev",
       "provider": "wxd59fa61ca4256bd1"
     }

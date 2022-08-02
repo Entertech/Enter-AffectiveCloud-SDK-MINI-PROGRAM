@@ -93,7 +93,7 @@ export default class ResponseBody {
 
   isBiodataResponse() {
     var result = true
-    if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services" == REQUEST_SERVICES_BIODATA]) {
+    if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services"]==REQUEST_SERVICES_BIODATA) {
       for (var prop in this.data) {
         if (prop.search("fields") != -1) {
           result = false
@@ -107,7 +107,7 @@ export default class ResponseBody {
 
   isAffectiveDataResponse() {
     var result = true
-    if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services" == REQUEST_SERVICES_AFFECTIVE]) {
+    if (this.request["op"] == REQUEST_OPTION_SUBSCRIBE && this.request["services"]==REQUEST_SERVICES_AFFECTIVE) {
       for (var prop in this.data) {
         if (prop.search("fields") !=-1) {
           result = false

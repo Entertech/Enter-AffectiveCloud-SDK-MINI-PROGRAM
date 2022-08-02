@@ -4,5 +4,7 @@
 
 <button id="init" bindtap="init">初始化</button>
 <button id="upload" bindtap="upload">上传数据</button>
+<button id="restore" bindtap="restore">重连接</button>
+<button id="report" bindtap="report">获取报表</button>
 <button id="release" bindtap="release">结束</button>
 <hello-list items="{{ items }}" />

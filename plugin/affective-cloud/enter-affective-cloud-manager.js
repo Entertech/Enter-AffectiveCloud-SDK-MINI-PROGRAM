@@ -118,7 +118,6 @@ export default class EnterAffectiveCloudManager {
           }
         }, {
           "onSuccess": function (subFields) {
-            console.log("sub affective success")
             callback.onSuccess()
           },
           "onError": function (error) {
@@ -140,15 +139,15 @@ export default class EnterAffectiveCloudManager {
     affective_cloud_api.openWebSocket(function () {
       affective_cloud_api.createSession({
         "onSuccess": function (sessionId) {
-          console.log("create success", sessionId)
           that.initBiodata({
             "onSuccess": function () {
               if (that.config["services"]["affective"] != null) {
                 that.initAffective(callback)
-              }else{
+              } else {
                 callback.onSuccess()
               }
-            },"onError":function (error) {
+            },
+            "onError": function (error) {
               callback.onError(error)
             }
           })
@@ -164,14 +163,22 @@ export default class EnterAffectiveCloudManager {
     })
   }
   restore(callback) {
-    that = this
+    var that = this
     if (affective_cloud_api.isWebSocketOpen()) {
       affective_cloud_api.restore({
         "onSuccess": function () {
-          that.initBiodata(callback)
-          if (that.config["services"]["affective"] != null) {
-            that.initAffective(callback)
-          }
+          that.initBiodata({
+            "onSuccess": function () {
+              if (that.config["services"]["affective"] != null) {
+                that.initAffective(callback)
+              } else {
+                callback.onSuccess()
+              }
+            },
+            "onError": function (error) {
+              callback.onError(error)
+            }
+          })
         },
         "onError": function (error) {
           callback.onError(error)
@@ -179,7 +186,31 @@ export default class EnterAffectiveCloudManager {
         }
       })
     } else {
-      that.init(callback)
+      affective_cloud_api.openWebSocket(function () {
+        affective_cloud_api.restore({
+          "onSuccess": function () {
+            that.initBiodata({
+              "onSuccess": function () {
+                if (that.config["services"]["affective"] != null) {
+                  that.initAffective(callback)
+                } else {
+                  callback.onSuccess()
+                }
+              },
+              "onError": function (error) {
+                callback.onError(error)
+              }
+            })
+          },
+          "onError": function (error) {
+            callback.onError(error)
+            that.isInit = false
+          }
+        })
+      }, function (error) {
+        that.isInit = false
+        callback.onError(error)
+      })
     }
   }
 
@@ -201,7 +232,7 @@ export default class EnterAffectiveCloudManager {
           callback.onError(error)
         }
       })
-    }else{
+    } else {
       callback.onSuccess()
     }
   }
@@ -243,5 +274,13 @@ export default class EnterAffectiveCloudManager {
   }
   addRawJsonResponseListener(listener) {
     affective_cloud_api.addRawJsonResponseListener(listener)
+  }
+
+  closeWebSocket() {
+    affective_cloud_api.closeWebSocket()
+  }
+
+  isWebSocketOpen() {
+    return affective_cloud_api.isOpen()
   }
 }

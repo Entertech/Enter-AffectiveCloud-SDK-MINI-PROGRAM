@@ -13,9 +13,11 @@ function connect(cloudUrl, timeout = 10000, connectSuccess, connectFailed) {
     success:function(res){
     },
     fail: function (error) {//打开连接失败
+      isWebSocketOpen = false
     }
   })
   task.onClose((code,reason)=>{
+    isWebSocketOpen = false
     if(disconnectListeners != null){
       for(var i in disconnectListeners){
         disconnectListeners[i](code,reason)
@@ -91,11 +93,11 @@ function addRawJsonResponseListener(listener) {
   rawJsonResponseListeners.push(listener)
 }
 function addConnectListener(listener) {
-  connectListener = listener
+  connectListeners.push(listener)
 }
 
 function addDisconnectListener(listener) {
-  disconnectListener = listener
+  disconnectListeners.push(listener)
 }
 module.exports.closeWebSocket = closeWebSocket
 module.exports.isOpen = isOpen

@@ -62,7 +62,7 @@ var HR_PACKAGE_LENGTH = 1
 var PEPR_PACKAGE_LENGTH = 15
 var DEFAULT_UPLOAD_CYCLE = 3
 var messageReceiveLisetner = function (msg) {
-  console.log("receive msg:", msg)
+  // console.log("receive msg:", msg)
   var responseObject = JSON.parse(msg)
   var response = new ResponseBody(responseObject)
   if (response.isCreateOp()) {
@@ -342,7 +342,6 @@ function appendEEGData(brainData) {
     requestBody["services"] = SERVER_BIO_DATA
     requestBody["op"] = "upload"
     requestBody["kwargs"] = kwargs
-    console.log("eeg length", mBrainDataBuffer.length)
     websocket_helper.sendMessage(requestBody)
     mBrainDataBuffer = []
   }
@@ -364,7 +363,6 @@ function appendHeartData(heartRateData) {
     requestBody["op"] = "upload"
     requestBody["kwargs"] = kwargs
     websocket_helper.sendMessage(requestBody)
-    // console.log("send hr", JSON.stringify(requestBody))
     mHeartDataBuffer = []
   }
 }
@@ -506,7 +504,7 @@ function addRawJsonResponseListener(listener) {
 }
 
 function addConnectListener(listener) {
-  websocket_helper.addDisconnectListener(listener)
+  websocket_helper.addConnectListener(listener)
 }
 
 function addDisconnectListener(listener) {
@@ -538,3 +536,5 @@ module.exports.addRawJsonRequestListener = addRawJsonRequestListener
 module.exports.addRawJsonResponseListener = addRawJsonResponseListener
 module.exports.addConnectListener = addConnectListener
 module.exports.addDisconnectListener = addDisconnectListener
+module.exports.closeWebSocket = closeWebSocket
+module.exports.isWebSocketOpen = isWebSocketOpen
