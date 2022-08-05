@@ -44,22 +44,26 @@ var mSessionId = null
 var mBrainDataBuffer = []
 var mHeartDataBuffer = new Array()
 var mPeprDataBuffer = []
+var mSCDataBuffer = []
 
 var uploadEEGTriggerCount = 1800
 var uploadHRTriggerCount = 6
 var uploadPEPRTriggerCount = 45
+var uploadSCTriggerCount = 1530
 
 var DEFAULT_UPLOAD_EEG_PACKAGE_COUNT = 30
 var DEFAULT_UPLOAD_HR_PACKAGE_COUNT = 2
 var DEFAULT_UPLOAD_PEPR_PACKAGE_COUNT = 15
 var BASE_UPLOAD_EEG_PACKAGE_COUNT = 50
 var BASE_UPLOAD_HR_PACKAGE_COUNT = 3
+var UPLOAD_SCEEG_PACKAGE_COUNT = 30
 var UPLOAD_MCEEG_PACKAGE_COUNT = 30
 var UPLOAD_BCG_PACKAGE_COUNT = 10
 var UPLOAD_GYRO_PACKAGE_COUNT = 5
 var EEG_PACKAGE_LENGTH = 20
 var HR_PACKAGE_LENGTH = 1
 var PEPR_PACKAGE_LENGTH = 15
+var SC_PACKAGE_LENGTH = 17
 var DEFAULT_UPLOAD_CYCLE = 3
 var messageReceiveLisetner = function (msg) {
   // console.log("receive msg:", msg)
@@ -184,6 +188,7 @@ function init(url, timeout, appKey, appSecret, userId, uploadCycle) {
   uploadEEGTriggerCount = BASE_UPLOAD_EEG_PACKAGE_COUNT * EEG_PACKAGE_LENGTH * mUploadCycle
   uploadHRTriggerCount = BASE_UPLOAD_HR_PACKAGE_COUNT * HR_PACKAGE_LENGTH * mUploadCycle
   uploadPEPRTriggerCount = DEFAULT_UPLOAD_PEPR_PACKAGE_COUNT * PEPR_PACKAGE_LENGTH * mUploadCycle
+  uploadSCTriggerCount = UPLOAD_SCEEG_PACKAGE_COUNT * SC_PACKAGE_LENGTH * mUploadCycle
   websocket_helper.addRawJsonResponseListener(messageReceiveLisetner)
 }
 
@@ -214,7 +219,7 @@ function createSession(callback) {
       "sign": mSign,
       "user_id": userIdEncoded,
       "timestamp": timestamp,
-      "upload_cycle": 3
+      "upload_cycle": mUploadCycle
     }
     requestBody["services"] = SERVER_SESSION
     requestBody["op"] = OP_CREATE
@@ -246,7 +251,7 @@ function sendRestore() {
       "sign": mSign,
       "user_id": userIdEncoded,
       "timestamp": timestamp,
-      "upload_cycle": 3,
+      "upload_cycle": mUploadCycle,
       "session_id": mSessionId
     }
     requestBody["services"] = SERVER_SESSION
@@ -307,14 +312,18 @@ function initBiodataServicesWithParams(serviceList, callback, optionParams) {
   requestBody["services"] = SERVER_BIO_DATA
   requestBody["op"] = "init"
   requestBody["kwargs"] = kwargs
+  
   websocket_helper.sendMessage(requestBody)
 }
 
-function initAffectiveDataServices(services, callback) {
+function initAffectiveDataServices(services, callback, optionParams) {
   mAffectiveStartCallback = callback
   mStartedAffectiveServices = services
   var kwargs = {
-    "cloud_services": services
+    "cloud_services": services,
+  }
+  if (optionParams != null) {
+    Object.assign(kwargs, optionParams)
   }
 
   var requestBody = {
@@ -325,7 +334,27 @@ function initAffectiveDataServices(services, callback) {
   requestBody["services"] = SERVER_AFFECTIVE
   requestBody["op"] = "start"
   requestBody["kwargs"] = kwargs
+  
   websocket_helper.sendMessage(requestBody)
+}
+
+function appendSCEEGData(brainData) {
+  mSCDataBuffer = mSCDataBuffer.concat(brainData)
+  if (mSCDataBuffer.length >= uploadSCTriggerCount) {
+    var kwargs = {
+      "sceeg": mSCDataBuffer
+    }
+    var requestBody = {
+      "services": {},
+      "op": "",
+      "kwargs": {},
+    }
+    requestBody["services"] = SERVER_BIO_DATA
+    requestBody["op"] = "upload"
+    requestBody["kwargs"] = kwargs
+    websocket_helper.sendMessage(requestBody)
+    mSCDataBuffer = []
+  }
 }
 
 function appendEEGData(brainData) {
@@ -520,6 +549,7 @@ module.exports.initBiodataServices = initBiodataServices
 module.exports.initBiodataServicesWithParams = initBiodataServicesWithParams
 module.exports.initAffectiveDataServices = initAffectiveDataServices
 module.exports.appendEEGData = appendEEGData
+module.exports.appendSCEEGData = appendSCEEGData
 module.exports.appendHeartData = appendHeartData
 module.exports.appendPEPRData = appendPEPRData
 module.exports.subscribeBioData = subscribeBioData

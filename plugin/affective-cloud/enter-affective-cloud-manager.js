@@ -39,6 +39,13 @@ var config = {
       "case": [],
       "allow": true //是否存储数据
     }
+  },
+  "affective_params": {
+    "sleep": { // 睡眠算法参数
+      "eeg_power_output" : true, //是否输出各脑波能量。可选择输出全程各脑波能量变化曲线，该曲线与睡眠曲线长度一致，便于绘图处理。
+      "sleep_stage_output" : true, //是否输出睡眠分期。可选择输出全程睡眠分期。
+      "advanced_analysis" : true //是否进行进阶分析。进阶分析包括睡眠过程中的体动、觉醒输出以及睡眠抗干扰能力等指标。
+    }
   }
 }
 export default class EnterAffectiveCloudManager {
@@ -51,7 +58,7 @@ export default class EnterAffectiveCloudManager {
     } else {
       timeout = config["session"]["timeout"]
     }
-    if (config.uploadCycle != null) {
+    if (config["session"]["upload_cycle"] != null) {
       uploadCycle = config["session"]["upload_cycle"]
     }
     affective_cloud_api.init(config["session"]["url"], timeout, config["session"]["app_key"], config["session"]["app_secret"], config["session"]["user_id"], uploadCycle)
@@ -104,6 +111,9 @@ export default class EnterAffectiveCloudManager {
 
   initAffective(callback) {
     var that = this
+    var optionsMap = {
+      "algorithm_params": this.config["affective_params"]
+    }
     var affectiveServices = this.config["services"]["affective"]
     affective_cloud_api.initAffectiveDataServices(affectiveServices, {
       "onSuccess": function () {
@@ -128,7 +138,7 @@ export default class EnterAffectiveCloudManager {
       "onError": function (error) {
         callback.onError(error)
       }
-    })
+    }, optionsMap)
   }
   isInited() {
     return this.isInit
@@ -256,6 +266,9 @@ export default class EnterAffectiveCloudManager {
   }
   appendHeartRateData(hr) {
     affective_cloud_api.appendHeartData(hr)
+  }
+  appendSCEEGData(sc) {
+    affective_cloud_api.appendSCEEGData(sc)
   }
   addBiodataRealtimeListener(listener) {
     this.mBiodataRealtimeListener = listener
